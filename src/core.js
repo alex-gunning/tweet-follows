@@ -1,10 +1,15 @@
 import {List, Map} from 'immutable';
 
-export const INITIAL_STATE = Map();
+export const INITIAL_STATE = Map({
+																	"followers":Map(),
+																	"tweets":Map()
+																});
 
 export function setFollowers(state, followerEntry) {
 	const [user, followers] = getUserAndFollowers(followerEntry);
-	return addFollowersAsUsers(addFollowers(addUser(addFollowerStructure(state), user), user, followers), followers);
+	const userState = addUser(state, user);
+	const followerState = addFollowers(userState, user, followers);
+	return addFollowersAsUsers(followerState, followers);
 }
 
 // Adds the follower structure existance to the state
@@ -39,13 +44,14 @@ function addFollowers(state, user, followers) {
 
 // Adds followers as users as well but only if they don't already exist.
 function addFollowersAsUsers(state, followers) {
-	let users = Map();
-	for(let i = 0 ; i < followers.length; i++) {
-		if(!state.get("followers").has(followers[i])) {
-			users = users.setIn([followers[i]], List());
-		}
-	}
-	return state.mergeIn(["followers"], users);
+	/*
+	* My technique here is to build the follower map and then merge it with the 
+	* actual user map, thereby overwriting any previous followers with actual
+	* users if they are present.
+	*/
+	const followerMap = Map(followers.map((item, index) => ([item, List()]) ));
+	const userMap = state.get("followers");
+	return state.mergeIn(["followers"], followerMap.merge(userMap));
 }
 
 

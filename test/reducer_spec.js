@@ -12,7 +12,8 @@ describe('reducer', () => {
 				"followers":{
 					"John":["Michael"],
 					"Michael":[]
-				}
+				},
+				"tweets":{}
 			}));
 	});
 
@@ -22,17 +23,19 @@ describe('reducer', () => {
 			"followers":{
 				"Ben":[],
 				"Michael":[]
-			}
+			},
+			"tweets":{}
 		});
 		const nextState = reducer(state, action);
 
 		expect(nextState).to.equal(fromJS({
 			"followers":{
 				"Ben":[],
-				"Michael":[],
+				"Clinton":[],
 				"John":["Clinton", "Michael"],
-				"Clinton":[]
-			}
+				"Michael":[]
+			},
+			"tweets":{}
 		}));
 	});
 
@@ -60,7 +63,29 @@ describe('reducer', () => {
 	});
 
 	it('SET_FOLLOWERS arranges user and follower list alphabetically', () => {
-		// Stub
+		const action = {type:'SET_FOLLOWERS', entry:'John follows Clinton, Betty, Kelly'};
+		const state = fromJS({
+			"followers":{
+				"Alex":[],
+				"Mike":["Alex", "Wayne"],
+				"Wayne":[]
+			},
+			"tweets":{}
+		});
+		const nextState = reducer(state, action);
+
+		expect(nextState).to.equal(fromJS({
+			"followers":{
+				"Alex":[],
+				"Betty":[],
+				"Clinton":[],
+				"John":["Betty", "Clinton", "Kelly"],
+				"Kelly":[],
+				"Mike":["Alex", "Wayne"],
+				"Wayne":[]
+			},
+			"tweets":{}
+		}));
 	});
 
 	it('SET_FOLLOWERS can be used multiple times', () => {

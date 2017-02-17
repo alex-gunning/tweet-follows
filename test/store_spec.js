@@ -5,10 +5,13 @@ import makeStore from '../src/store';
 
 describe('redux store', () => {
 	it('works with a reducer', () => {
-		
+
 		const store = makeStore();
 		store.dispatch({ type: "notAnAction" });
 
-		expect(store.getState()).to.equal(Map());
+		expect(store.getState()).to.equal(fromJS({
+																							"followers":{},
+																							"tweets":{}
+																							}));
 	});
 });

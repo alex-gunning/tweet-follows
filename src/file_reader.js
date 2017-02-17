@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs';
 import Promise from 'promise';
 
 export default function readFileAsync(fileName) {
