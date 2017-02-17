@@ -30,7 +30,7 @@ describe('reducer', () => {
 			"followers":{
 				"Ben":[],
 				"Michael":[],
-				"John":["Michael","Clinton"],
+				"John":["Clinton", "Michael"],
 				"Clinton":[]
 			}
 		}));
@@ -54,9 +54,17 @@ describe('reducer', () => {
 				"Michael":["Clinton"],
 				"Wayne":[],
 				"Zane":[],
-				"John":["Michael", "Clinton"]
+				"John":["Clinton", "Michael"]
 			}
 		}));
+	});
+
+	it('SET_FOLLOWERS arranges user and follower list alphabetically', () => {
+		// Stub
+	});
+
+	it('SET_FOLLOWERS can be used multiple times', () => {
+		// Stub
 	});
 
 });

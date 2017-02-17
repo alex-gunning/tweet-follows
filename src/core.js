@@ -22,6 +22,7 @@ function getUserAndFollowers(followerEntry) {
 	return [users[0], users[1].split(",").map(str => str.trim())];
 }
 
+// Adds a user to the follower map with a blank follower list if they don't already exist.
 function addUser(state, user) {
 	if(!state.get("followers").has(user)) {
 		return state.setIn(["followers", user], List());
@@ -30,16 +31,19 @@ function addUser(state, user) {
 	}
 }
 
+// Adds a follower list to a user.
 function addFollowers(state, user, followers) {
 	const followerList = state.get("followers").get(user).push(...followers);
-	return state.setIn(["followers", user], followerList); 
+	return state.setIn(["followers", user], followerList.sort()); 
 }
 
+// Adds followers as users as well but only if they don't already exist.
 function addFollowersAsUsers(state, followers) {
 	let users = Map();
 	for(let i = 0 ; i < followers.length; i++) {
-		// Todo: Add check to see that user is not already in the list
-		users = users.setIn([followers[i]], List());
+		if(!state.get("followers").has(followers[i])) {
+			users = users.setIn([followers[i]], List());
+		}
 	}
 	return state.mergeIn(["followers"], users);
 }
