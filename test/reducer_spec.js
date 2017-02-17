@@ -16,12 +16,47 @@ describe('reducer', () => {
 			}));
 	});
 
-	it('Works with SET_FOLLOWERS', () => {
-		expect(1).to.not.equal(2);
+	it('SET_FOLLOWERS adds a user for each user in the follower list', () => {
+		const action = {type:'SET_FOLLOWERS', entry:'John follows Michael, Clinton'};
+		const state = fromJS({
+			"followers":{
+				"Ben":[],
+				"Michael":[]
+			}
+		});
+		const nextState = reducer(state, action);
+
+		expect(nextState).to.equal(fromJS({
+			"followers":{
+				"Ben":[],
+				"Michael":[],
+				"John":["Michael","Clinton"],
+				"Clinton":[]
+			}
+		}));
 	});
 
-	it('SET_FOLLOWERS adds a user for each user mentioned', () => {
+	it('SET_FOLLOWERS follower list does not modify the user list', () => {
+		const action = {type:'SET_FOLLOWERS', entry:'John follows Michael, Clinton'};
+		const state = fromJS({
+			"followers":{
+				"Clinton":["Wayne", "Zane"],
+				"Michael":["Clinton"],
+				"Wayne":[],
+				"Zane":[],
+			}
+		});
+		const nextState = reducer(state, action);
 
+		expect(nextState).to.equal(fromJS({
+			"followers":{
+				"Clinton":["Wayne", "Zane"],
+				"Michael":["Clinton"],
+				"Wayne":[],
+				"Zane":[],
+				"John":["Michael", "Clinton"]
+			}
+		}));
 	});
 
 });

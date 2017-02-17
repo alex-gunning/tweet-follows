@@ -1,12 +1,10 @@
-import {List, Map, fromJS} from 'immutable';
+import {List, Map} from 'immutable';
 
 export const INITIAL_STATE = Map();
 
 export function setFollowers(state, followerEntry) {
-	const users = getUserAndFollowers(followerEntry);
-	const followerState = addFollowerStructure(state);
-	
-	return addFollowersAsUsers(addFollowers(addUser(followerState, users[0]), users[0], users[1]), users[1]);
+	const [user, followers] = getUserAndFollowers(followerEntry);
+	return addFollowersAsUsers(addFollowers(addUser(addFollowerStructure(state), user), user, followers), followers);
 }
 
 // Adds the follower structure existance to the state
