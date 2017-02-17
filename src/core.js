@@ -2,12 +2,13 @@ import {List, Map} from 'immutable';
 
 export const INITIAL_STATE = Map({
 																	"followers":Map(),
+																	"numTweets":0,
 																	"tweets":Map()
 																});
 
 export function setFollowers(state, followerEntry) {
 	const [user, followers] = getUserAndFollowers(followerEntry);
-	const userState = addUser(state, user);
+	const userState = addUserToFollowerList(state, user);
 	const followerState = addFollowers(userState, user, followers);
 	return addFollowersAsUsers(followerState, followers);
 }
@@ -28,7 +29,7 @@ function getUserAndFollowers(followerEntry) {
 }
 
 // Adds a user to the follower map with a blank follower list if they don't already exist.
-function addUser(state, user) {
+function addUserToFollowerList(state, user) {
 	if(!state.get("followers").has(user)) {
 		return state.setIn(["followers", user], List());
 	} else {
@@ -55,6 +56,28 @@ function addFollowersAsUsers(state, followers) {
 }
 
 
-export function setTweets(state, tweetEntry) {
-	// Skeleton
+export function setTweet(state, tweetEntry) {
+	const [user, tweet] = getUserAndTweet(tweetEntry);
+	const userState = addUserToTweetList(state, user);
+	const tweetState = addTweet(userState, user, tweet);
+	return tweetState.updateIn(["numTweets"], t => t + 1);
+}
+
+function getUserAndTweet(tweetEntry) {
+	return tweetEntry.split(">").map(str => str.trim());
+}
+
+function addUserToTweetList(state, user) {
+	if(!state.get("tweets").has(user)) {
+		return state.setIn(["tweets", user], List());
+	} else {
+		return state;
+	}
+}
+
+function addTweet(state, user, tweet) {
+	const tweetId = state.get("numTweets");
+	const userTweet = Map.of(tweetId.toString(), tweet);
+	const tweetList = state.getIn(["tweets", user]).push(userTweet);
+	return state.setIn(["tweets", user], tweetList);
 }

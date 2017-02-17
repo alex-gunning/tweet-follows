@@ -7,3 +7,4 @@ Assumptions:
 	Data is always well-formed.
 	Users will not follow other users more than once.
 	Users will not follow themselves.
+	Delimiters are not used in the actual data.

@@ -13,6 +13,7 @@ describe('reducer', () => {
 					"John":["Michael"],
 					"Michael":[]
 				},
+				"numTweets":0,
 				"tweets":{}
 			}));
 	});
@@ -24,6 +25,7 @@ describe('reducer', () => {
 				"Ben":[],
 				"Michael":[]
 			},
+			"numTweets":0,
 			"tweets":{}
 		});
 		const nextState = reducer(state, action);
@@ -35,6 +37,7 @@ describe('reducer', () => {
 				"John":["Clinton", "Michael"],
 				"Michael":[]
 			},
+			"numTweets":0,
 			"tweets":{}
 		}));
 	});
@@ -47,7 +50,9 @@ describe('reducer', () => {
 				"Michael":["Clinton"],
 				"Wayne":[],
 				"Zane":[],
-			}
+			},
+			"numTweets":0,
+			"tweets":{}
 		});
 		const nextState = reducer(state, action);
 
@@ -58,7 +63,9 @@ describe('reducer', () => {
 				"Wayne":[],
 				"Zane":[],
 				"John":["Clinton", "Michael"]
-			}
+			},
+			"numTweets":0,
+			"tweets":{}
 		}));
 	});
 
@@ -70,6 +77,7 @@ describe('reducer', () => {
 				"Mike":["Alex", "Wayne"],
 				"Wayne":[]
 			},
+			"numTweets":0,
 			"tweets":{}
 		});
 		const nextState = reducer(state, action);
@@ -84,12 +92,47 @@ describe('reducer', () => {
 				"Mike":["Alex", "Wayne"],
 				"Wayne":[]
 			},
+			"numTweets":0,
 			"tweets":{}
 		}));
 	});
 
 	it('SET_FOLLOWERS can be used multiple times', () => {
-		// Stub
+		const firstAction = {type:'SET_FOLLOWERS', entry:'John follows Clinton'};
+		const firstState = reducer(undefined, firstAction);
+
+		const secondAction = {type:'SET_FOLLOWERS', entry:'Clinton follows Mike'};
+		const secondState = reducer(firstState, secondAction);
+
+		const thirdAction = {type:'SET_FOLLOWERS', entry:'Mike follows John'};
+		const thirdState = reducer(secondState, thirdAction);
+
+		expect(thirdState).to.equal(fromJS({
+			"followers": {
+				"Clinton":["Mike"],
+				"John":["Clinton"],
+				"Mike":["John"]
+			},
+			"numTweets":0,
+			"tweets":{}
+		}));
+	});
+
+	it('SET_TWEETS creates an initial state', () => {
+		const action = {type:'SET_TWEET', entry:'Emma> Hello world!.'};
+		const state = reducer(undefined, action);
+
+		expect(state).to.equal(fromJS({
+			"followers":{},
+			"numTweets":1,
+			"tweets": {
+				"Emma":[{"0":"Hello world!."}]
+			}
+		}));
+	});
+
+	it('SET_TWEETS adds a tweet to a user in the tweet list', () => {
+		
 	});
 
 });

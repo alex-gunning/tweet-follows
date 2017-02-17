@@ -11,6 +11,7 @@ describe('redux store', () => {
 
 		expect(store.getState()).to.equal(fromJS({
 																							"followers":{},
+																							"numTweets":0,
 																							"tweets":{}
 																							}));
 	});
