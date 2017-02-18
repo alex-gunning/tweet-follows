@@ -1,4 +1,4 @@
-import { INITIAL_STATE, setFollowers, setTweet } from './core'
+import { INITIAL_STATE, setFollowers, setTweet, getAllTweets } from './core'
 
 export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
@@ -6,6 +6,8 @@ export default function reducer(state = INITIAL_STATE, action) {
     	return setFollowers(state, action.entry);
     case 'SET_TWEET':
     	return setTweet(state, action.entry);
+    case 'GET_TWEETS':
+    	return getAllTweets(state);
   }
   return state;
 }

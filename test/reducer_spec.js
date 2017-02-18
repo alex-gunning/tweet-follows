@@ -118,21 +118,88 @@ describe('reducer', () => {
 		}));
 	});
 
-	it('SET_TWEETS creates an initial state', () => {
-		const action = {type:'SET_TWEET', entry:'Emma> Hello world!.'};
+	it('SET_TWEET creates an initial state', () => {
+		const action = {type:'SET_TWEET', entry:'Emma> We never really understand anything.'};
 		const state = reducer(undefined, action);
 
 		expect(state).to.equal(fromJS({
 			"followers":{},
 			"numTweets":1,
 			"tweets": {
-				"Emma":[{"0":"Hello world!."}]
+				"Emma":[{"0":"We never really understand anything."}]
 			}
 		}));
 	});
 
-	it('SET_TWEETS adds a tweet to a user in the tweet list', () => {
-		
+	it('SET_TWEET adds a tweet to a user in the tweet list', () => {
+		const action = {type:'SET_TWEET', entry:'Emma> We simply get more used to it.'};
+		const initialState = fromJS({
+			"followers":{},
+			"numTweets":1,
+			"tweets": {
+				"Emma":[{"0":"We never really understand anything."}]
+			}
+		});
+		const state = reducer(initialState, action);
+
+		expect(state).to.equal(fromJS({
+			"followers":{},
+			"numTweets":2,
+			"tweets": {
+				"Emma":[{"0":"We never really understand anything."},{"1":"We simply get more used to it."}]
+			}
+		}));
 	});
+
+	it('SET_TWEET can be used multiple times.', () => {
+
+		const firstAction = {type:'SET_TWEET', entry:'Emma> We never really understand anything.'};
+		const firstState = reducer(undefined, firstAction);
+
+		const secondAction = {type:'SET_TWEET', entry:'Alex> What what?'};
+		const secondState = reducer(firstState, secondAction);
+
+		const thirdAction = {type:'SET_TWEET', entry:'Emma> We simply get more used to it.'};
+		const thirdState = reducer(secondState, thirdAction);
+
+		expect(thirdState).to.equal(fromJS({
+			"followers":{},
+			"numTweets":3,
+			"tweets": {
+				"Alex":[{"1":"What what?"}],
+				"Emma":[{"0":"We never really understand anything."},{"2":"We simply get more used to it."}]
+			}
+		}));
+	});
+
+	it('GET_TWEETS returns a simulated twitter feed.', () => {
+		const firstAction = {type:'SET_FOLLOWERS', entry:'Alex follows Emma'};
+		const firstState = reducer(undefined, firstAction);
+
+		const secondAction = {type:'SET_TWEET', entry:'Emma> We never really understand anything.'};
+		const secondState = reducer(firstState, secondAction);
+
+		const thirdAction = {type:'SET_TWEET', entry:'Alex> Oh really?'};
+		const thirdState = reducer(secondState, thirdAction);
+
+		const forthAction = {type:'SET_TWEET', entry:'Emma> We simply get more used to it.'};
+		const initialState = reducer(thirdState, forthAction);
+
+		const action = {type:'GET_TWEETS'};
+		const finalState = reducer(initialState, action);
+
+		expect(finalState).to.equal(fromJS([
+			{
+				"Alex": [	"@Emma: We never really understand anything.",
+									"@Alex: Oh really?",
+									"@Emma: We simply get more used to it."],
+			},
+			{
+				"Emma": [	"@Emma: We never really understand anything.",
+									"@Emma: We simply get more used to it."]
+			}
+		]));
+	});
+
 
 });

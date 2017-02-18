@@ -55,7 +55,6 @@ function addFollowersAsUsers(state, followers) {
 	return state.mergeIn(["followers"], followerMap.merge(userMap));
 }
 
-
 export function setTweet(state, tweetEntry) {
 	const [user, tweet] = getUserAndTweet(tweetEntry);
 	const userState = addUserToTweetList(state, user);
@@ -63,10 +62,12 @@ export function setTweet(state, tweetEntry) {
 	return tweetState.updateIn(["numTweets"], t => t + 1);
 }
 
+// Strip users and tweets from an entry. Remove whitespace.
 function getUserAndTweet(tweetEntry) {
 	return tweetEntry.split(">").map(str => str.trim());
 }
 
+// Adds a user to the tweet list if they do not already exist.
 function addUserToTweetList(state, user) {
 	if(!state.get("tweets").has(user)) {
 		return state.setIn(["tweets", user], List());
@@ -75,9 +76,52 @@ function addUserToTweetList(state, user) {
 	}
 }
 
+// Appends a tweet to a user's tweet list.
 function addTweet(state, user, tweet) {
 	const tweetId = state.get("numTweets");
 	const userTweet = Map.of(tweetId.toString(), tweet);
 	const tweetList = state.getIn(["tweets", user]).push(userTweet);
 	return state.setIn(["tweets", user], tweetList);
+}
+
+// Returns an immutable object of all tweets and follower's tweets in the correct order.
+export function getAllTweets(state) {
+
+	// Todo: split these into functions
+	const users = state.getIn(["followers"]).keySeq();
+	const usersWithFollowers = users.map(usr => {
+		return Map.of(usr, List(state.getIn(["followers", usr])).insert(0, usr));
+	});
+	const userTweets = usersWithFollowers.toList().map(entry => {
+		// User name 					: entry.keySeq().first() 
+		// User follower list : entry.first());
+
+		const tweetsList = entry.first().map(user => {
+			if(state.get("tweets").has(user)) {
+				return state.getIn(["tweets", user])
+										.map(tweet => {
+											return formatTweetMap(tweet, user);
+										});
+			} else {
+				return List();
+			}
+		});
+
+		/**
+		* Concatenate all of these maps together into a list and sort it by the tweet number. 
+		* Then remove the map around the tweet.
+		*/
+		const organisedTweetsList = tweetsList.reduce((a,b,c) => { return a.concat(b); })
+																					.sortBy(a => a.keySeq().first())
+																					.map(tweet => tweet.first());
+		
+		return Map.of(entry.keySeq().first(), organisedTweetsList);
+	});
+
+	return userTweets;
+}
+
+// Formats the text inside the tweet map with the format [@user: tweet]
+function formatTweetMap(tweetMap, user) {
+	return Map.of(tweetMap.keySeq().first(), `@${user}: ${tweetMap.first()}`)
 }
