@@ -39,7 +39,7 @@ function addUserToFollowerList(state, user) {
 
 // Adds a follower list to a user.
 function addFollowers(state, user, followers) {
-	const followerList = state.get("followers").get(user).push(...followers);
+	const followerList = List(followers); //state.get("followers").get(user).push(...followers);
 	return state.setIn(["followers", user], followerList.sort()); 
 }
 
@@ -95,7 +95,6 @@ export function getAllTweets(state) {
 	const userTweets = usersWithFollowers.toList().map(entry => {
 		// User name 					: entry.keySeq().first() 
 		// User follower list : entry.first());
-
 		const tweetsList = entry.first().map(user => {
 			if(state.get("tweets").has(user)) {
 				return state.getIn(["tweets", user])
@@ -118,7 +117,7 @@ export function getAllTweets(state) {
 		return Map.of(entry.keySeq().first(), organisedTweetsList);
 	});
 
-	return userTweets;
+	return userTweets.sortBy(a => a.keySeq().first());
 }
 
 // Formats the text inside the tweet map with the format [@user: tweet]

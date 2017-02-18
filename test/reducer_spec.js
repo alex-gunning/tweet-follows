@@ -69,7 +69,37 @@ describe('reducer', () => {
 		}));
 	});
 
-	it('SET_FOLLOWERS arranges user and follower list alphabetically', () => {
+	it('SET_FOLLOWERS replaces the user\'s follower list if it exists', () => {
+		const action = {type:'SET_FOLLOWERS', entry:'John follows Penny, Clinton'};
+		const state = fromJS({
+			"followers":{
+				"Clinton":["Wayne", "Zane"],
+				"John":["Penny"],
+				"Michael":["Clinton"],
+				"Penny":[],
+				"Wayne":[],
+				"Zane":[],
+			},
+			"numTweets":0,
+			"tweets":{}
+		});
+		const nextState = reducer(state, action);
+
+		expect(nextState).to.equal(fromJS({
+			"followers":{
+				"Clinton":["Wayne", "Zane"],
+				"John":["Clinton", "Penny"],
+				"Michael":["Clinton"],
+				"Penny":[],
+				"Wayne":[],
+				"Zane":[],
+			},
+			"numTweets":0,
+			"tweets":{}
+		}));
+	});
+
+	it('SET_FOLLOWERS arranges user map and follower list alphabetically', () => {
 		const action = {type:'SET_FOLLOWERS', entry:'John follows Clinton, Betty, Kelly'};
 		const state = fromJS({
 			"followers":{
@@ -201,5 +231,52 @@ describe('reducer', () => {
 		]));
 	});
 
+	it('GET_TWEETS\'s simulated twitter is in alphabetical order.', () => {
+		const firstAction = {type:'SET_FOLLOWERS', entry:'Alex follows Emma'};
+		const firstState = reducer(undefined, firstAction);
+
+		const secondAction = {type:'SET_TWEET', entry:'Emma> We never really understand anything.'};
+		const secondState = reducer(firstState, secondAction);
+
+		const thirdAction = {type:'SET_TWEET', entry:'Alex> Oh really?'};
+		const thirdState = reducer(secondState, thirdAction);
+
+		const forthAction = {type:'SET_TWEET', entry:'Emma> We simply get more used to it.'};
+		const forthState = reducer(thirdState, forthAction);
+
+		const fifthAction = {type:'SET_TWEET', entry:'Clint> Functional programming is easy!'};
+		const fifthState = reducer(forthState, fifthAction);
+
+		const sixthAction = {type:'SET_TWEET', entry:'Alex> No it\'s not!'};
+		const sixthState = reducer(fifthState, sixthAction);
+
+		const seventhAction = {type:'SET_FOLLOWERS', entry:'Emma follows Clint'};
+		const seventhState = reducer(sixthState, seventhAction);
+
+		const eighthAction = {type:'SET_FOLLOWERS', entry:'Clint follows Alex'};
+		const eightState = reducer(seventhState, eighthAction);
+
+		const action = {type:'GET_TWEETS'};
+		const finalState = reducer(eightState, action);
+
+		expect(finalState).to.equal(fromJS([
+			{
+				"Alex": [	"@Emma: We never really understand anything.",
+									"@Alex: Oh really?",
+									"@Emma: We simply get more used to it.",
+									"@Alex: No it's not!"],
+			},
+			{
+				"Clint": ["@Alex: Oh really?",
+									"@Clint: Functional programming is easy!",
+									"@Alex: No it's not!"]
+			},
+			{
+				"Emma": [	"@Emma: We never really understand anything.",
+									"@Emma: We simply get more used to it.",
+									"@Clint: Functional programming is easy!"]
+			}
+		]));
+	});
 
 });
