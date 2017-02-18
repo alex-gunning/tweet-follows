@@ -86,38 +86,46 @@ function addTweet(state, user, tweet) {
 
 // Returns an immutable object of all tweets and follower's tweets in the correct order.
 export function getAllTweets(state) {
-
-	// Todo: split these into functions
 	const users = state.getIn(["followers"]).keySeq();
 	const usersWithFollowers = users.map(usr => {
 		return Map.of(usr, List(state.getIn(["followers", usr])).insert(0, usr));
 	});
+	/**
+	* userWithFollowers now contains a sequence of maps. Each of which user is the key 
+	* and the followers are the value (with the user prepended as the first follower)
+	* My technique is to now replace each follower by their tweets.
+	*/
 	const userTweets = usersWithFollowers.toList().map(entry => {
 		// User name 					: entry.keySeq().first() 
 		// User follower list : entry.first());
 		const tweetsList = entry.first().map(user => {
-			if(state.get("tweets").has(user)) {
-				return state.getIn(["tweets", user])
-										.map(tweet => {
-											return formatTweetMap(tweet, user);
-										});
-			} else {
-				return List();
-			}
+			return replaceFollowerWithTweets(state, user);
 		});
 
 		/**
 		* Concatenate all of these maps together into a list and sort it by the tweet number. 
 		* Then remove the map around the tweet.
 		*/
-		const organisedTweetsList = tweetsList.reduce((a,b,c) => { return a.concat(b); })
+		const formattedTweetsList = tweetsList.reduce((a,b,c) => { return a.concat(b); })
 																					.sortBy(a => a.keySeq().first())
 																					.map(tweet => tweet.first());
 		
-		return Map.of(entry.keySeq().first(), organisedTweetsList);
+		return Map.of(entry.keySeq().first(), formattedTweetsList);
 	});
 
 	return userTweets.sortBy(a => a.keySeq().first());
+}
+
+// Replaces a follower with a map of the follower's formatted tweets with tweet numbers as keys.
+function replaceFollowerWithTweets(state, follower) {
+	if(state.get("tweets").has(follower)) {
+		return state.getIn(["tweets", follower])
+			.map(tweet => {
+				return formatTweetMap(tweet, follower);
+			});
+	} else {
+		return List();
+	}
 }
 
 // Formats the text inside the tweet map with the format [@user: tweet]
