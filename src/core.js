@@ -13,22 +13,13 @@ export function setFollowers(state, followerEntry) {
 	return addFollowersAsUsers(followerState, followers);
 }
 
-// Adds the follower structure existance to the state
-function addFollowerStructure(state) {
-	if(!state.hasIn(["followers"])) {
-		return state.setIn(["followers"], Map());
-	} else {
-		return state;
-	}
-}
-
 // Strip users and followers from an entry. Remove whitespace.
 function getUserAndFollowers(followerEntry) {
 	const users = followerEntry.split("follows").map(str => str.trim());
 	return [users[0], users[1].split(",").map(str => str.trim())];
 }
 
-// Adds a user to the follower map with a blank follower list if they don't already exist.
+// Adds a user to the follower map with a blank follower list if the user doesn't already exist.
 function addUserToFollowerList(state, user) {
 	if(!state.get("followers").has(user)) {
 		return state.setIn(["followers", user], List());
@@ -39,7 +30,7 @@ function addUserToFollowerList(state, user) {
 
 // Adds a follower list to a user.
 function addFollowers(state, user, followers) {
-	const followerList = List(followers); //state.get("followers").get(user).push(...followers);
+	const followerList = List(followers);
 	return state.setIn(["followers", user], followerList.sort()); 
 }
 
@@ -91,7 +82,7 @@ export function getAllTweets(state) {
 		return Map.of(usr, List(state.getIn(["followers", usr])).insert(0, usr));
 	});
 	/**
-	* userWithFollowers now contains a sequence of maps. Each of which user is the key 
+	* userWithFollowers now contains a sequence of maps. Each user is the key 
 	* and the followers are the value (with the user prepended as the first follower)
 	* My technique is to now replace each follower by their tweets.
 	*/
