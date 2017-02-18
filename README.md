@@ -12,3 +12,9 @@ Assumptions:
 
 Questions:
 	If a user does not appear in the follower list file, are their tweets ignored?
+
+Instructions:
+	Assuming NodeJS and npm are installed:
+		Install with `npm install`
+		Run with `npm run start user.txt tweet.txt`
+		Run tests with `npm run test`
