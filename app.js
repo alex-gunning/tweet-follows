@@ -8,7 +8,6 @@ export const store = makeStore();
 // Invoke file reader promises from command-line arguments.
 Promise.all([readFileAsync(`data/${process.argv[2]}`), readFileAsync(`data/${process.argv[3]}`)])
 .then(data => {
-	console.log(data[0].split("\r\n").slice(0,3));
 	data[0].split("\r\n").slice(0,3).forEach(value => {
 		store.dispatch({type:"SET_FOLLOWERS", entry:value});
 	});
