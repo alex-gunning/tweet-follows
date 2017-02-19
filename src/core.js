@@ -1,10 +1,10 @@
 import {List, Map} from 'immutable';
 
 export const INITIAL_STATE = Map({
-																	"followers":Map(),
-																	"numTweets":0,
-																	"tweets":Map()
-																});
+				"followers":Map(),
+				"numTweets":0,
+				"tweets":Map()
+				});
 
 export function setFollowers(state, followerEntry) {
 	const [user, followers] = getUserAndFollowers(followerEntry);
@@ -98,8 +98,8 @@ export function getAllTweets(state) {
 		* Then remove the map around the tweet.
 		*/
 		const formattedTweetsList = tweetsList.reduce((a,b,c) => { return a.concat(b); })
-																					.sortBy(a => a.keySeq().first())
-																					.map(tweet => tweet.first());
+							.sortBy(a => a.keySeq().first())
+							.map(tweet => tweet.first());
 		
 		return Map.of(entry.keySeq().first(), formattedTweetsList);
 	});

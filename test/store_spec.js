@@ -9,10 +9,12 @@ describe('redux store', () => {
 		const store = makeStore();
 		store.dispatch({ type: "notAnAction" });
 
-		expect(store.getState()).to.equal(fromJS({
-																							"followers":{},
-																							"numTweets":0,
-																							"tweets":{}
-																							}));
+		expect(store.getState()).to.equal(fromJS(
+			{
+				"followers":{},
+				"numTweets":0,
+				"tweets":{}
+			}
+    ));
 	});
 });
