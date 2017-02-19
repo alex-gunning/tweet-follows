@@ -5,13 +5,12 @@ Assumptions:
 	There could be more data.
 	Usernames are unique.
 	Data is always well-formed.
-	Users will not follow other users more than once.
+	A user will not follow anther user more than once.
 	Users will not follow themselves.
 	Delimiters are not used in the actual data.
 	Newer data in user.txt reflects the current state of the user's followees.
-
-Questions:
-	If a user does not appear in the follower list file, are their tweets ignored?
+	GET_TWEETS will be the last action used as it modifies the state into an easier format for printing.
+	(One could store the previous state in a variable if necessary.)
 
 Instructions:
 	Assuming NodeJS and npm are installed:

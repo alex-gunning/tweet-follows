@@ -231,7 +231,7 @@ describe('reducer', () => {
 		]));
 	});
 
-	it('GET_TWEETS\'s simulated twitter feed is in alphabetical order.', () => {
+	it('GET_TWEETS\' simulated twitter feed is in user alphabetical order.', () => {
 		const firstAction = {type:'SET_FOLLOWERS', entry:'Alex follows Emma'};
 		const firstState = reducer(undefined, firstAction);
 
